@@ -11,7 +11,34 @@ from collections import OrderedDict
 filepath = os.getcwd()+"/desktop/harrypotter/"
 filename = "Harry Potter and the Sorcerer's Stone.txt"
 
+def convertPDFtoTXT(filepath, filename):
+    resourceManager = PDFResourceManager()
+    string = StringIO()
+    codec = 'utf-8'
+    laParams = LAParams()
+    converter =  TextConverter(resourceManager, string, codec = codec, laparams = laParams)
+    inFile = open(filepath+filename, "rb")
+    interpreter = PDFPageInterpreter(resourceManager, converter)
+    password = ''
+    maxPages = 0
+    caching = True
+    pageNums = set()
+        
+    for page in PDFPage.get_pages(inFile, pageNums, maxpages = maxPages, password = password, caching = caching, check_extractable = True):
+         interpreter.process_page(page)
+            
+    inFile.close()
+    converter.close()
+    fileText = string.getvalue()
+    string.close()
+    
 
+    with open(filepath+filename[:-4]+".txt", "w") as wr:
+        wr.write(fileText)
+
+        #print(fileText)       
+
+        
 def getContent():
     with open(os.getcwd()+"/desktop/harrypotter/Harry Potter and the Sorcerer's Stone.txt", "r") as f:
         fullSample = f.read()
